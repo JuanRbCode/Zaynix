@@ -1,6 +1,16 @@
-﻿# Historial de versiones
+# Historial de versiones
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versiones según [SemVer](https://semver.org/lang/es/).
+
+## [0.7.2] - Sin publicar
+
+### Cambiado
+- Licencia del código: de MIT a GPL versión 3 o posterior. El nombre y el logo quedan reservados (MARCA.md).
+- Términos de uso más claros sobre privacidad, conexiones de la app y uso responsable.
+- Textos grises, verdes y rojos con mejor contraste en ambos temas.
+
+### Corregido
+- El instalador incluye las licencias de las librerías de terceros y el enlace al código de FFmpeg.
 
 ## [0.7.1] - 2026-11-21
 

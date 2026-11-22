@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import hashlib
 import importlib.metadata
@@ -143,7 +143,7 @@ def enlace_descarga(datos: dict | None) -> str:
 
 ENLACES = {
     "novedades": f"https://github.com/{REPOSITORIO}/blob/main/CHANGELOG.md",
-    "licencias": f"https://github.com/{REPOSITORIO}/blob/main/LICENSE",
+    "licencias": f"https://github.com/{REPOSITORIO}/blob/main/LICENCIAS.md",
     "problema": f"https://github.com/{REPOSITORIO}/issues/new",
     "sitio": SITIO_WEB,
 }

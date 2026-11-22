@@ -2,7 +2,7 @@
 
 Aplicación de escritorio para Windows que descarga audio desde enlaces (YouTube, SoundCloud y cientos de sitios más) y lo guarda como MP3, y que convierte archivos de audio entre formatos.
 
-Gratuita y de código abierto.
+Gratuita, sin fines de lucro y de código abierto. Descarga oficial: https://zaynix-website.up.railway.app
 
 ## Funciones
 
@@ -99,15 +99,8 @@ Zaynix es una herramienta. Eres responsable de descargar solo contenido que te p
 
 ## Licencia
 
-Código bajo licencia [MIT](LICENSE).
+Software libre bajo la [GPL versión 3 o posterior](LICENSE). Las versiones hasta la 0.7.1 se publicaron con licencia MIT.
 
-Dependencias de terceros, cada una con su propia licencia:
+El nombre "Zaynix" y el logo ZX están reservados: si publicas tu propia versión, usa otro nombre y otro logo. Lee [MARCA.md](MARCA.md).
 
-| Componente | Licencia |
-|---|---|
-| [yt-dlp](https://github.com/yt-dlp/yt-dlp) | Unlicense |
-| [Flet](https://github.com/flet-dev/flet) | Apache 2.0 |
-| [FFmpeg](https://ffmpeg.org) (vía imageio-ffmpeg) | GPL/LGPL |
-| [Pillow](https://github.com/python-pillow/Pillow) | MIT-CMU |
-
-Si distribuyes un ejecutable que incluya FFmpeg, debes respetar su licencia (incluir el aviso y un enlace a su código fuente).
+Para proponer mejoras, lee [CONTRIBUTING.md](CONTRIBUTING.md). Licencias de los componentes incluidos: [LICENCIAS.md](LICENCIAS.md).

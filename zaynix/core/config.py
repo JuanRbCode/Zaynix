@@ -1,11 +1,11 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import os
 from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 
-VERSION = "0.7.1"
+VERSION = "0.7.2"
 REPOSITORIO = "JuanRbCode/Zaynix"
 SITIO_WEB = os.environ.get("ZAYNIX_SITIO", "https://zaynix-website.up.railway.app").rstrip("/")
 CARPETA_DATOS = Path(os.environ.get("APPDATA", Path.home())) / "Zaynix"

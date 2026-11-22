@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import flet as ft
 
@@ -122,7 +122,7 @@ class VistaAjustes:
         ])
         self.pie = ft.Row([
             c.texto(f"Zaynix v{version}", tema.T_MINI, P.texto_suave, ft.FontWeight.W_500),
-            c.texto("Código abierto · Licencia MIT", tema.T_MINI, P.texto_tenue),
+            c.texto("Software libre · GPLv3 · Sin garantía", tema.T_MINI, P.texto_tenue),
         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
 
     def mostrar_carpeta_descargas(self, ruta: str) -> None:

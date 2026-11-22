@@ -1,4 +1,4 @@
-﻿param(
+param(
     [switch]$SinPruebas,
     [switch]$SinCompilar
 )
@@ -24,6 +24,9 @@ if (-not $SinCompilar) {
     & $flet build windows --yes --build-version $version
     if ($LASTEXITCODE -ne 0) { throw "flet build falló." }
 }
+
+& $python tools\recopilar_licencias.py
+if ($LASTEXITCODE -ne 0) { throw "Faltan licencias de terceros." }
 
 Write-Host "3/4 Creando el instalador" -ForegroundColor Cyan
 $iscc = @(
