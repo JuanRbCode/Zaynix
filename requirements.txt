@@ -1,0 +1,6 @@
+﻿flet==1.1.2
+yt-dlp[default]
+deno
+imageio-ffmpeg
+mutagen
+pillow
