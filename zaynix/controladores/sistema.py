@@ -18,6 +18,11 @@ def mostrar_en_carpeta(ruta: Path) -> None:
         os.startfile(ruta.parent)
 
 
+def abrir_web(url: str) -> None:
+    import webbrowser
+    webbrowser.open(url)
+
+
 def validar_enlace(texto: str) -> str | None:
     if not texto:
         return "Pega un enlace para continuar."

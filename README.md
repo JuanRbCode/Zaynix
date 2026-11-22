@@ -1,4 +1,4 @@
-# Zaynix
+﻿# Zaynix
 
 Aplicación de escritorio para Windows que descarga audio desde enlaces (YouTube, SoundCloud y cientos de sitios más) y lo guarda como MP3, y que convierte archivos de audio entre formatos.
 
@@ -21,8 +21,8 @@ ffmpeg viene incluido (paquete `imageio-ffmpeg`), no hay que instalarlo aparte.
 ## Instalación
 
 ```powershell
-git clone https://github.com/<tu-usuario>/zaynix.git
-cd zaynix
+git clone https://github.com/JuanRbCode/Zaynix.git
+cd Zaynix
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```

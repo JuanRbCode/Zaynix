@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import threading
 from typing import Callable
@@ -6,23 +6,29 @@ from typing import Callable
 import flet as ft
 
 from zaynix.core import actualizador
-from zaynix.core.config import REPOSITORIO, Config
+from zaynix.controladores.sistema import abrir_web
+from zaynix.core.config import Config
 from zaynix.core.errores import traducir_error
+from zaynix.core.registro import log
 from zaynix.ui.vistas.ajustes import VistaAjustes
 from zaynix.ui.vistas.descargar import VistaDescargar
+
+
+INTERVALO_REVISION = 6 * 60 * 60
 
 
 class ControladorAjustes:
     def __init__(self, page: ft.Page, vista: VistaAjustes, cfg: Config, selector: ft.FilePicker,
                  descargar: VistaDescargar, al_cambiar_conversion: Callable[[], None],
-                 al_cambiar_tema: Callable[[str], None], insignia: Callable[[bool], None]):
+                 al_cambiar_tema: Callable[[str], None], al_nueva_version: Callable[[dict], None]):
         self.page, self.vista, self.cfg, self.selector = page, vista, cfg, selector
         self.v_descargar = descargar
         self.al_cambiar_conversion = al_cambiar_conversion
         self.al_cambiar_tema = al_cambiar_tema
-        self.insignia = insignia
+        self.al_nueva_version = al_nueva_version
+        self._avisada: str | None = None
         self._bloqueo = threading.Lock()
-        self._nueva: str | None = None
+        self._nueva: dict | None = None
 
         vista.boton_descargas.on_click = self.elegir_carpeta_descargas
         vista.boton_conversiones.on_click = self.elegir_carpeta_conversiones
@@ -32,17 +38,17 @@ class ControladorAjustes:
         vista.portada.on_change = lambda e: self._guardar(incrustar_portada=vista.portada.value)
         vista.abrir_al_terminar.on_change = lambda e: self._guardar(abrir_al_terminar=vista.abrir_al_terminar.value)
         vista.boton_buscar.on_click = lambda e: page.run_thread(self.buscar_version, True)
-        vista.boton_obtener.on_click = lambda e: page.launch_url(actualizador.pagina_version(self._nueva))
-        vista.enlace_cambios.on_click = lambda e: page.launch_url(actualizador.pagina_version())
-        vista.enlace_licencias.on_click = lambda e: page.launch_url(
-            f"https://github.com/{REPOSITORIO}/blob/main/LICENSE")
-        vista.enlace_problema.on_click = lambda e: page.launch_url(f"https://github.com/{REPOSITORIO}/issues/new")
+        vista.boton_obtener.on_click = lambda e: abrir_web(actualizador.enlace_descarga(self._nueva))
+        vista.enlace_sitio.on_click = lambda e: abrir_web(actualizador.ENLACES["sitio"])
+        vista.enlace_cambios.on_click = lambda e: abrir_web(actualizador.ENLACES["novedades"])
+        vista.enlace_licencias.on_click = lambda e: abrir_web(actualizador.ENLACES["licencias"])
+        vista.enlace_problema.on_click = lambda e: abrir_web(actualizador.ENLACES["problema"])
         for clave, tarjeta in vista.temas.items():
             tarjeta.on_click = lambda e, k=clave: self._elegir_tema(k)
 
         vista.mostrar_estado_version("")
         threading.Thread(target=actualizador.actualizar_motor_en_segundo_plano, daemon=True).start()
-        page.run_thread(self.buscar_version, False)
+        self._vigilar()
 
     def _guardar(self, **cambios):
         for k, v in cambios.items():
@@ -57,6 +63,17 @@ class ControladorAjustes:
         self.cfg.guardar()
         self.al_cambiar_tema(clave)
 
+    activo: "ControladorAjustes | None" = None
+    _vigilando = False
+
+    def _vigilar(self):
+        ControladorAjustes.activo = self
+        if not ControladorAjustes._vigilando:
+            ControladorAjustes._vigilando = True
+            _ciclo_revision()
+        else:
+            self.page.run_thread(self.buscar_version, False)
+
     def buscar_version(self, manual: bool):
         if not self._bloqueo.acquire(blocking=False):
             return
@@ -67,11 +84,15 @@ class ControladorAjustes:
                 self.page.update()
             self._nueva = actualizador.hay_version_app()
             if self._nueva:
-                v.mostrar_estado_version(f"Nueva versión {self._nueva} disponible.", "exito", disponible=True)
-                self.insignia(True)
+                version = str(self._nueva["version"])
+                v.mostrar_estado_version(f"Nueva versión {version} disponible.", "exito", disponible=True)
+                if self._avisada != version or manual:
+                    self._avisada = version
+                    self.al_nueva_version(self._nueva)
             elif manual:
                 v.mostrar_estado_version("Estás al día. Tienes la última versión.", "exito")
         except Exception as ex:
+            log.warning("No se pudo comprobar la versión: %s", ex)
             if manual:
                 v.mostrar_estado_version(f"No se pudo comprobar. {traducir_error(ex)}", "error")
         finally:
@@ -109,3 +130,12 @@ class ControladorAjustes:
     def _cambiar_formato(self, clave: str):
         self.v_descargar.formato.elegir(clave)
         self._guardar(formato_descarga=clave)
+
+
+def _ciclo_revision():
+    controlador = ControladorAjustes.activo
+    if controlador:
+        controlador.page.run_thread(controlador.buscar_version, False)
+    temporizador = threading.Timer(INTERVALO_REVISION, _ciclo_revision)
+    temporizador.daemon = True
+    temporizador.start()

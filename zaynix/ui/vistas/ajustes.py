@@ -60,9 +60,10 @@ class VistaAjustes:
         self.boton_obtener.visible = False
         self.buscando = ft.ProgressBar(value=None, color=P.primario, bgcolor=P.activo, bar_height=3,
                                        border_radius=3, visible=False)
-        self.enlace_cambios = ft.TextButton("Novedades", icon=ft.Icons.OPEN_IN_NEW_ROUNDED)
-        self.enlace_licencias = ft.TextButton("Licencias", icon=ft.Icons.DESCRIPTION_OUTLINED)
-        self.enlace_problema = ft.TextButton("Reportar un problema", icon=ft.Icons.BUG_REPORT_OUTLINED)
+        self.enlace_sitio = c.fila_enlace(ft.Icons.LANGUAGE_ROUNDED, "Sitio web")
+        self.enlace_cambios = c.fila_enlace(ft.Icons.NEW_RELEASES_OUTLINED, "Novedades")
+        self.enlace_licencias = c.fila_enlace(ft.Icons.DESCRIPTION_OUTLINED, "Licencias")
+        self.enlace_problema = c.fila_enlace(ft.Icons.BUG_REPORT_OUTLINED, "Reportar un problema")
 
         self.texto_descargas = c.texto(cfg.carpeta_descargas, tema.T_MINI, P.texto_suave, expand=True)
         self.boton_descargas = c.boton_secundario("Cambiar", alto=32)
@@ -114,7 +115,9 @@ class VistaAjustes:
                     self.boton_buscar,
                 ], spacing=8),
                 self.buscando,
-                ft.Row([self.enlace_cambios, self.enlace_licencias, self.enlace_problema], spacing=0, wrap=True),
+                c.separador(),
+                ft.Column([self.enlace_sitio, self.enlace_cambios, self.enlace_licencias, self.enlace_problema],
+                          spacing=0),
             ]),
         ])
         self.pie = ft.Row([

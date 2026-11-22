@@ -1,10 +1,12 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 import flet as ft
 
 from zaynix.controladores.ajustes import ControladorAjustes
 from zaynix.controladores.convertir import ControladorConvertir
 from zaynix.controladores.descargar import ControladorDescargar
+from zaynix.controladores.sistema import abrir_web
+from zaynix.core.actualizador import enlace_descarga
 from zaynix.core.config import VERSION, Config
 from zaynix.core.historial import Historial
 from zaynix.ui import componentes as c
@@ -46,7 +48,7 @@ class Aplicacion:
                                               self.shell.mostrar_actividad)
         page.add(self.shell.raiz)
         ControladorAjustes(page, v_ajustes, cfg, selector, v_descargar, self.convertir.actualizar_destino,
-                           self._cambiar_tema, self._insignia)
+                           self._cambiar_tema, self._nueva_version)
         page.update()
         if abrir_ajustes:
             self.panel.abrir()
@@ -54,8 +56,10 @@ class Aplicacion:
     def _cambiar_tema(self, nombre: str) -> None:
         self.construir(abrir_ajustes=True)
 
-    def _insignia(self, visible: bool) -> None:
-        self.shell.mostrar_insignia(visible)
+    def _nueva_version(self, datos: dict) -> None:
+        self.shell.mostrar_insignia(True)
+        self.shell.aviso.mostrar(f"Zaynix {datos['version']} disponible", datos.get("notas", ""))
+        self.shell.aviso.boton.on_click = lambda e: abrir_web(enlace_descarga(datos))
         self.page.update()
 
     async def _teclado(self, e: ft.KeyboardEvent) -> None:

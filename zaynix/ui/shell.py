@@ -41,10 +41,12 @@ class Shell:
                    alignment=ft.MainAxisAlignment.CENTER),
             left=0, top=0, right=0,
         )
+        self.aviso = c.AvisoFlotante()
         self.raiz = ft.Stack(expand=True, controls=[
             ft.Container(desplazable, left=0, top=0, right=0, bottom=0),
             desvanecido,
             barra,
+            self.aviso.control,
             *ajustes.capas,
         ])
 

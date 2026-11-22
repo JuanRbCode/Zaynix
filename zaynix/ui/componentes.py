@@ -320,6 +320,50 @@ class ListaRecientes:
         self.contador.value = f"{n}" if n else ""
 
 
+def fila_enlace(icono, rotulo: str, on_click: Callable | None = None) -> ft.Container:
+    return ft.Container(
+        padding=ft.Padding.symmetric(horizontal=10, vertical=10), border_radius=tema.RADIO, ink=True,
+        on_click=on_click,
+        content=ft.Row([
+            ft.Icon(icono, size=17, color=P.texto_suave),
+            texto(rotulo, tema.T_PEQUENO, expand=True),
+            ft.Icon(ft.Icons.OPEN_IN_NEW_ROUNDED, size=14, color=P.texto_tenue),
+        ], spacing=12),
+    )
+
+
+class AvisoFlotante:
+    def __init__(self):
+        self._titulo = texto("", tema.T_PEQUENO, peso=ft.FontWeight.W_600)
+        self._detalle = texto("", tema.T_MINI, P.texto_suave, cortar=False)
+        self.boton = boton_primario("Descargar", ft.Icons.DOWNLOAD_ROUNDED)
+        self.boton.height = 34
+        self.control = ft.Container(
+            right=24, bottom=24, width=340, visible=False, padding=16,
+            bgcolor=P.superficie, border=ft.Border.all(1, P.borde_fuerte), border_radius=tema.RADIO_TARJETA,
+            shadow=ft.BoxShadow(blur_radius=24, color="#000000,0.25", offset=ft.Offset(0, 8)),
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.ROCKET_LAUNCH_OUTLINED, size=18, color=P.texto),
+                    ft.Container(self._titulo, expand=True),
+                    boton_icono(ft.Icons.CLOSE_ROUNDED, "Cerrar", lambda e: self.ocultar(), 16),
+                ], spacing=10),
+                self._detalle,
+                ft.Row([self.boton], alignment=ft.MainAxisAlignment.END),
+            ], spacing=8, tight=True),
+        )
+
+    def mostrar(self, titulo: str, detalle: str) -> None:
+        self._titulo.value = titulo
+        self._detalle.value = detalle
+        self._detalle.visible = bool(detalle)
+        self.control.visible = True
+
+    def ocultar(self) -> None:
+        self.control.visible = False
+        refrescar(self.control)
+
+
 def seccion_ajustes(titulo: str, filas: list[ft.Control]) -> ft.Column:
     return ft.Column([
         ft.Container(etiqueta(titulo), padding=ft.Padding.only(left=4)),
