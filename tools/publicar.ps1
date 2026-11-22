@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$SinPruebas,
     [switch]$SinCompilar
 )
@@ -10,15 +10,18 @@ Set-Location $raiz
 $version = (Select-String -Path "zaynix\core\config.py" -Pattern 'VERSION = "(.+)"').Matches[0].Groups[1].Value
 Write-Host "Zaynix $version" -ForegroundColor Cyan
 
+$python = if (Test-Path ".venv\Scripts\python.exe") { ".venv\Scripts\python.exe" } else { "python" }
+$flet = if (Test-Path ".venv\Scripts\flet.exe") { ".venv\Scripts\flet.exe" } else { "flet" }
+
 if (-not $SinPruebas) {
     Write-Host "1/4 Pruebas" -ForegroundColor Cyan
-    & .venv\Scripts\python -m pytest -m "not red"
+    & $python -m pytest -m "not red"
     if ($LASTEXITCODE -ne 0) { throw "Las pruebas fallaron." }
 }
 
 if (-not $SinCompilar) {
     Write-Host "2/4 Compilando la app" -ForegroundColor Cyan
-    & .venv\Scripts\flet build windows --yes --build-version $version
+    & $flet build windows --yes --build-version $version
     if ($LASTEXITCODE -ne 0) { throw "flet build falló." }
 }
 

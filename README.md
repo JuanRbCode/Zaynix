@@ -1,4 +1,4 @@
-﻿# Zaynix
+# Zaynix
 
 Aplicación de escritorio para Windows que descarga audio desde enlaces (YouTube, SoundCloud y cientos de sitios más) y lo guarda como MP3, y que convierte archivos de audio entre formatos.
 
@@ -75,6 +75,10 @@ tools/               Scripts auxiliares (generar_icono.py)
 Los ajustes y el historial se guardan en `%APPDATA%\Zaynix\`.
 
 ## Publicar una versión
+
+**Automático:** al hacer push a `main` con una `VERSION` nueva, GitHub Actions (`.github/workflows/publicar.yml`) corre las pruebas, compila el instalador y publica el Release. La web lo detecta sola en menos de 10 minutos.
+
+**Manual** (por ejemplo, para probar en tu PC):
 
 Requisitos: Visual Studio Build Tools con C++ e [Inno Setup 6](https://jrsoftware.org/isinfo.php). Flutter se descarga solo la primera vez.
 
