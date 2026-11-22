@@ -36,6 +36,7 @@ jobs:
           $existe = if ($LASTEXITCODE -eq 0) { "true" } else { "false" }
           "existe=$existe" >> $env:GITHUB_OUTPUT
           if ($existe -eq "true") { Write-Host "La versión $v ya está publicada." } else { Write-Host "Versión nueva: $v" }
+          exit 0
 
       - name: Preparar Python
         if: github.event_name == 'workflow_dispatch' || steps.version.outputs.existe == 'false'
