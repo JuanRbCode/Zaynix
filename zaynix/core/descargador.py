@@ -42,10 +42,18 @@ class Info:
 
 def _js_runtimes() -> dict:
     try:
-        from deno import find_deno_bin
-        return {"deno": {"path": find_deno_bin()}}
+        import deno
+        candidatos = [Path(deno.__file__).resolve().parent.parent / "bin" / "deno.exe"]
+        try:
+            candidatos.insert(0, Path(deno.find_deno_bin()))
+        except Exception:
+            pass
+        for ruta in candidatos:
+            if ruta.exists():
+                return {"deno": {"path": str(ruta)}}
     except Exception:
-        return {"deno": {}}
+        pass
+    return {"deno": {}}
 
 
 def _base() -> dict:
