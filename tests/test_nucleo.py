@@ -31,7 +31,7 @@ def test_tamano_legible():
     ("ERROR: <urlopen error [Errno 11001] getaddrinfo failed>", "Sin conexión"),
     ("ERROR: Unsupported URL: https://x.com", "no es compatible"),
     ("ERROR: [youtube] abc: Private video", "privado"),
-    ("ERROR: [youtube] Unable to extract nsig function", "Actualiza el motor"),
+    ("ERROR: [youtube] Unable to extract nsig function", "Cierra Zaynix"),
     ("HTTP Error 403: Forbidden", "rechazó"),
     ("[Errno 28] No space left on device", "espacio"),
 ])

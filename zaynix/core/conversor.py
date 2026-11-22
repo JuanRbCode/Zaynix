@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import re
 import subprocess
+from collections import deque
 from pathlib import Path
 from typing import Callable
 
-from zaynix.core.errores import Cancelado
+from zaynix.core.archivos import preparar_carpeta
+from zaynix.core.errores import Cancelado, ErrorClaro
 from zaynix.core.ffmpeg import ffmpeg_exe
 
 
@@ -25,6 +27,7 @@ EXTENSIONES_AUDIO = ["mp3", "wav", "flac", "m4a", "aac", "ogg", "opus", "wma", "
 EXTENSIONES_VIDEO = ["mp4", "mkv", "webm", "mov", "avi", "flv", "wmv", "m4v", "3gp", "ts"]
 EXTENSIONES_ENTRADA = EXTENSIONES_AUDIO + EXTENSIONES_VIDEO
 
+_PROGRESO = re.compile(r"^(frame|fps|stream_|bitrate|total_size|out_time|dup_frames|drop_frames|speed|progress)\w*=")
 _SIN_VENTANA = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
@@ -57,17 +60,22 @@ def convertir_archivo(
 ) -> Path:
     if formato not in FORMATOS:
         raise ValueError(f"Formato no soportado: {formato}")
+    if not entrada.is_file():
+        raise ErrorClaro("El archivo original ya no está en su carpeta.")
     carpeta = carpeta or entrada.parent
-    carpeta.mkdir(parents=True, exist_ok=True)
+    preparar_carpeta(carpeta)
     salida = _ruta_salida(entrada, formato, carpeta)
     total = _duracion(entrada)
 
     cmd = [str(ffmpeg_exe()), "-hide_banner", "-loglevel", "error", "-y", "-i", str(entrada),
            *([] if formato in FORMATOS_VIDEO else ["-vn"]), "-map_metadata", "0", *FORMATOS[formato], "-progress", "pipe:1", "-nostats", str(salida)]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                            encoding="utf-8", errors="replace", creationflags=_SIN_VENTANA)
+    proc = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace", creationflags=_SIN_VENTANA)
+    errores: deque[str] = deque(maxlen=20)
     try:
         for linea in proc.stdout:
+            if linea.strip() and not _PROGRESO.match(linea):
+                errores.append(linea.strip())
             if cancelar and cancelar():
                 proc.kill()
                 raise Cancelado()
@@ -83,6 +91,5 @@ def convertir_archivo(
         raise
     if proc.returncode != 0:
         salida.unlink(missing_ok=True)
-        error = (proc.stderr.read() or "").strip().splitlines()
-        raise RuntimeError(error[-1] if error else "ffmpeg falló al convertir el archivo")
+        raise RuntimeError(errores[-1] if errores else "ffmpeg falló al convertir el archivo")
     return salida

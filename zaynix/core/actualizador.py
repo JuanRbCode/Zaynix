@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import hashlib
 import importlib.metadata
@@ -110,9 +110,9 @@ def instalar(version: str, al_progreso: Callable[[float | None], None] | None = 
     _guardar_estado(version=version)
 
 
-def actualizar_motor_en_segundo_plano() -> None:
+def actualizar_motor_en_segundo_plano(forzar: bool = False) -> None:
     from zaynix.core.registro import log
-    if not toca_revisar():
+    if not forzar and not toca_revisar():
         return
     try:
         nueva = hay_actualizacion()
@@ -143,7 +143,7 @@ def enlace_descarga(datos: dict | None) -> str:
 
 ENLACES = {
     "novedades": f"https://github.com/{REPOSITORIO}/blob/main/CHANGELOG.md",
-    "licencias": f"https://github.com/{REPOSITORIO}/blob/main/LICENSE",
+    "licencias": f"https://github.com/{REPOSITORIO}/blob/main/LICENCIAS.md",
     "problema": f"https://github.com/{REPOSITORIO}/issues/new",
     "sitio": SITIO_WEB,
 }

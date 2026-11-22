@@ -11,6 +11,7 @@ from zaynix.core.config import Config
 from zaynix.core.conversor import EXTENSIONES_ENTRADA, convertir_archivo
 from zaynix.core.errores import Cancelado, traducir_error
 from zaynix.core.historial import Entrada, Historial, fecha_corta
+from zaynix.core.registro import log
 from zaynix.ui.vistas.convertir import VistaConvertir
 
 TIPO = "conversion"
@@ -24,6 +25,7 @@ class ControladorConvertir:
         self.actividad = actividad
         self.archivos: list[Path] = []
         self._cancelar = threading.Event()
+        self.ocupado = False
 
         vista.boton_agregar.on_click = self.agregar
         vista.zona_vacia.on_click = self.agregar
@@ -67,6 +69,8 @@ class ControladorConvertir:
         self.page.update()
 
     async def agregar(self, e=None):
+        if self.ocupado:
+            return
         elegidos = await self.selector.pick_files("Elige archivos de audio", allow_multiple=True,
                                                   allowed_extensions=EXTENSIONES_ENTRADA)
         nuevos = [Path(f.path) for f in (elegidos or []) if f.path and Path(f.path) not in self.archivos]
@@ -74,10 +78,14 @@ class ControladorConvertir:
         self._refrescar()
 
     def quitar(self, indice: int):
+        if self.ocupado:
+            return
         self.archivos.pop(indice)
         self._refrescar()
 
     def limpiar(self, e=None):
+        if self.ocupado:
+            return
         self.archivos.clear()
         self._refrescar()
 
@@ -92,15 +100,18 @@ class ControladorConvertir:
         self.page.update()
 
     def iniciar(self, e=None):
+        if self.ocupado:
+            return
         if not self.archivos:
             self.vista.mostrar_aviso("Agrega al menos un archivo para convertir.")
             self.page.update()
             return
+        self.ocupado = True
+        self._cancelar.clear()
         self.page.run_thread(self._trabajar, list(self.archivos), self.vista.formato.valor)
 
     def _trabajar(self, archivos: list[Path], formato: str):
         v = self.vista
-        self._cancelar.clear()
         v.limpiar_aviso()
         v.poner_ocupado(True)
         self.page.update()
@@ -119,6 +130,7 @@ class ControladorConvertir:
                 except Cancelado:
                     raise
                 except Exception as ex:
+                    log.warning("Falló la conversión de %s a %s: %s", archivo.suffix, formato, ex)
                     fallidos.append(f"{archivo.name}: {traducir_error(ex)}")
                     continue
                 hechos.append(salida)
@@ -138,7 +150,11 @@ class ControladorConvertir:
                 mostrar_en_carpeta(hechos[-1])
         except Cancelado:
             v.mostrar_aviso("Conversión cancelada.", "aviso")
+        except Exception as ex:
+            log.warning("Falló la conversión a %s: %s", formato, ex)
+            v.mostrar_aviso(traducir_error(ex))
         finally:
+            self.ocupado = False
             v.poner_ocupado(False, bool(self.archivos))
             self.actividad(None)
             self.page.update()

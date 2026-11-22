@@ -31,7 +31,7 @@ def _texto_duracion(segundos: int | None) -> str:
 class VistaDescargar:
     def __init__(self, formato: str, calidad_mp3: str, carpeta: str):
         self.calidad_mp3 = calidad_mp3
-        self.url = c.campo("https://www.youtube.com/watch?v=…", ft.Icons.LINK_ROUNDED)
+        self.url = c.campo("Pega aquí el enlace", ft.Icons.LINK_ROUNDED)
         self.boton_pegar = c.boton_secundario("Pegar", ft.Icons.CONTENT_PASTE_ROUNDED)
         self.aviso = c.AvisoEnLinea()
 
@@ -69,7 +69,7 @@ class VistaDescargar:
         self.mostrar_destino(carpeta)
 
         self.raiz = ft.Column(spacing=tema.ESPACIO + 4, controls=[
-            c.encabezado("Descargar", "Pega un enlace de YouTube, SoundCloud u otro sitio compatible "
+            c.encabezado("Descargar", "Pega un enlace de una plataforma compatible "
                                       "y guárdalo como audio o video."),
             c.tarjeta(ft.Column(spacing=14, controls=[
                 ft.Column([
@@ -109,8 +109,12 @@ class VistaDescargar:
             opciones = {"max": "Máxima"}
             opciones.update({str(r): f"{r}p" if r < 2160 else "4K" for r in self.alturas})
             self.calidad.cambiar_opciones(opciones, "max")
-            self.nota_calidad.value = ("Resoluciones disponibles para este video." if self.alturas else
-                                       "Pega un enlace para ver las resoluciones disponibles.")
+            if self.alturas:
+                self.nota_calidad.value = "Resoluciones disponibles para este video."
+            elif self.previa.visible:
+                self.nota_calidad.value = "Este enlace no informa sus resoluciones. Se usará la mejor disponible."
+            else:
+                self.nota_calidad.value = "Pega un enlace para ver las resoluciones disponibles."
         elif formato in SIN_PERDIDA:
             self.rotulo_calidad.value = "Calidad"
             self.calidad.control.visible = False

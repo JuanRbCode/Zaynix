@@ -48,12 +48,15 @@ class Aplicacion:
                                               self.shell.mostrar_actividad)
         page.add(self.shell.raiz)
         ControladorAjustes(page, v_ajustes, cfg, selector, v_descargar, self.convertir.actualizar_destino,
-                           self._cambiar_tema, self._nueva_version)
+                           self._cambiar_tema, self._hay_tarea, self._nueva_version)
         page.update()
         if abrir_ajustes:
             self.panel.abrir()
 
-    def _cambiar_tema(self, nombre: str) -> None:
+    def _hay_tarea(self) -> bool:
+        return self.descargar.ocupado or self.convertir.ocupado
+
+    def _cambiar_tema(self) -> None:
         self.construir(abrir_ajustes=True)
 
     def _nueva_version(self, datos: dict) -> None:

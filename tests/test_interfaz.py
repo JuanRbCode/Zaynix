@@ -33,3 +33,17 @@ def test_calidades_cambian_segun_formato():
 def test_paletas_completas():
     assert tema.OSCURO.__dataclass_fields__.keys() == tema.CLARO.__dataclass_fields__.keys()
     assert tema.OSCURO.fondo != tema.CLARO.fondo
+
+
+def _luminancia(color):
+    canales = [int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    r, g, b = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in canales]
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+@pytest.mark.parametrize("paleta", tema.TEMAS.values(), ids=tema.TEMAS.keys())
+def test_contraste_minimo_aa(paleta):
+    for texto in ("texto", "texto_suave", "texto_tenue", "exito", "aviso", "error"):
+        for fondo in ("fondo", "superficie", "superficie_2"):
+            a, b = sorted((_luminancia(getattr(paleta, texto)), _luminancia(getattr(paleta, fondo))), reverse=True)
+            assert (a + 0.05) / (b + 0.05) >= 4.5, f"{texto} sobre {fondo}"

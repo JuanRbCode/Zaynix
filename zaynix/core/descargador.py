@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import shutil
+import subprocess
+import tempfile
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
 import yt_dlp
+import yt_dlp.postprocessor.ffmpeg as _pp_ffmpeg
+from yt_dlp.utils import DownloadCancelled
 
-from zaynix.core.errores import Cancelado
+from zaynix.core.archivos import mover_sin_reemplazar, preparar_carpeta
+from zaynix.core.errores import Cancelado, ErrorClaro, traducir_error
 from zaynix.core.ffmpeg import carpeta_ffmpeg
 
 FORMATOS_AUDIO = ["mp3", "m4a", "wav", "flac", "ogg", "opus"]
@@ -21,6 +28,46 @@ KBPS = {
 }
 RESOLUCIONES = [2160, 1440, 1080, 720, 480, 360]
 _CODEC_YTDLP = {"ogg": "vorbis"}
+_hilo = threading.local()
+
+
+class _Corte(DownloadCancelled):
+    pass
+
+
+class _PopenCancelable(_pp_ffmpeg.Popen):
+    def communicate_or_kill(self, *args, **kwargs):
+        cancelar = getattr(_hilo, "cancelar", None)
+        if cancelar is None or "timeout" in kwargs and kwargs["timeout"] is not None:
+            return super().communicate_or_kill(*args, **kwargs)
+        kwargs.pop("timeout", None)
+        while True:
+            try:
+                return self.communicate(*args, timeout=0.25, **kwargs)
+            except subprocess.TimeoutExpired:
+                if cancelar():
+                    self.kill(timeout=None)
+                    raise _Corte()
+
+
+_pp_ffmpeg.Popen = _PopenCancelable
+
+
+class _Avisos:
+    def __init__(self):
+        self.errores: list[str] = []
+
+    def debug(self, mensaje: str) -> None:
+        pass
+
+    def info(self, mensaje: str) -> None:
+        pass
+
+    def warning(self, mensaje: str) -> None:
+        pass
+
+    def error(self, mensaje: str) -> None:
+        self.errores.append(mensaje)
 
 
 @dataclass
@@ -91,8 +138,15 @@ def descargar(
     al_progreso: Callable[[float | None, str], None] | None = None,
     cancelar: Callable[[], bool] | None = None,
     portada: bool = True,
+    al_terminar: Callable[[Resultado], None] | None = None,
+    al_fallar: Callable[[str], None] | None = None,
 ) -> list[Resultado]:
-    carpeta.mkdir(parents=True, exist_ok=True)
+    preparar_carpeta(carpeta)
+    try:
+        temporal = Path(tempfile.mkdtemp(prefix=".zaynix-", dir=carpeta))
+    except OSError as ex:
+        raise ErrorClaro("No se puede escribir en la carpeta de destino. Elige otra en Ajustes.") from ex
+    avisos = _Avisos()
     resultados: list[Resultado] = []
     avisar = al_progreso or (lambda f, t: None)
     es_video = formato in FORMATOS_VIDEO
@@ -100,7 +154,7 @@ def descargar(
 
     def hook_descarga(d: dict) -> None:
         if cancelar and cancelar():
-            raise Cancelado()
+            raise _Corte()
         if d["status"] == "downloading":
             total = d.get("total_bytes") or d.get("total_bytes_estimate")
             hecho = d.get("downloaded_bytes", 0)
@@ -116,17 +170,25 @@ def descargar(
             avisar(None, "Uniendo video y audio…" if es_video else f"Convirtiendo a {formato.upper()}…")
 
     def hook_post(d: dict) -> None:
+        if d["status"] == "started" and cancelar and cancelar():
+            raise _Corte()
         if d["status"] == "finished" and d.get("postprocessor") == "MoveFiles":
             info = d["info_dict"]
-            archivo = Path(info.get("filepath") or info.get("_filename", ""))
-            resultados.append(Resultado(info.get("title", archivo.stem), archivo))
+            origen = Path(info.get("filepath") or info.get("_filename", ""))
+            archivo = mover_sin_reemplazar(origen, carpeta)
+            resultado = Resultado(info.get("title", archivo.stem), archivo)
+            resultados.append(resultado)
+            if al_terminar:
+                al_terminar(resultado)
 
     post: list[dict] = []
     opciones = {
         **_base(),
-        "outtmpl": str(carpeta / "%(title)s.%(ext)s"),
+        "outtmpl": str(temporal / "%(autonumber)s-%(id).40B" / "%(title).150B.%(ext)s"),
         "windowsfilenames": True,
         "noplaylist": not playlist,
+        "ignoreerrors": playlist,
+        "logger": avisos,
         "ffmpeg_location": str(carpeta_ffmpeg()),
         "writethumbnail": incrustar,
         "concurrent_fragment_downloads": 4,
@@ -152,6 +214,19 @@ def descargar(
         post.append({"key": "EmbedThumbnail"})
     opciones["postprocessors"] = post
 
-    with yt_dlp.YoutubeDL(opciones) as ydl:
-        ydl.download([url])
+    _hilo.cancelar = cancelar
+    try:
+        with yt_dlp.YoutubeDL(opciones) as ydl:
+            ydl.download([url])
+    except DownloadCancelled as ex:
+        raise Cancelado() from ex
+    finally:
+        _hilo.cancelar = None
+        shutil.rmtree(temporal, ignore_errors=True)
+    if not resultados:
+        detalle = avisos.errores[0] if avisos.errores else "No se encontró nada para descargar."
+        raise ErrorClaro(traducir_error(Exception(detalle)))
+    if al_fallar:
+        for mensaje in avisos.errores:
+            al_fallar(mensaje)
     return resultados

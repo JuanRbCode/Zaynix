@@ -1,10 +1,10 @@
 [project]
 name = "zaynix"
-version = "0.7.1"
+version = "0.7.2"
 description = "Descarga audio y video desde enlaces y convierte entre formatos."
 readme = "README.md"
 requires-python = ">=3.12"
-license = "MIT"
+license = "GPL-3.0-or-later"
 authors = [{ name = "JuanRbCode" }]
 dependencies = [
     "flet==1.1.2",

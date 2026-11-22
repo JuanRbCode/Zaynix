@@ -1,4 +1,4 @@
-﻿#ifndef Version
+#ifndef Version
   #define Version "0.0.0"
 #endif
 #define Nombre "Zaynix"
@@ -45,6 +45,7 @@ Name: "escritorio"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{c
 
 [Files]
 Source: "..\build\windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\build\licencias\*"; DestDir: "{app}\licencias"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#Nombre}"; Filename: "{app}\{#Ejecutable}"

@@ -1,6 +1,23 @@
-﻿# Historial de versiones
+# Historial de versiones
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versiones según [SemVer](https://semver.org/lang/es/).
+
+## [0.7.2] - 2026-11-22
+
+### Cambiado
+- Licencia del código: de MIT a GPL versión 3 o posterior. El nombre y el logo quedan reservados (MARCA.md).
+- Términos de uso más claros sobre privacidad, conexiones de la app y uso responsable.
+- Los textos ya no nombran plataformas concretas.
+- Textos grises, verdes y rojos con mejor contraste en ambos temas.
+
+### Corregido
+- Dos canciones con el mismo título ya no se reemplazan: la segunda se guarda con un número.
+- Si un elemento de una lista falla, se descargan los demás.
+- Cancelar funciona también durante la conversión y no deja archivos a medias.
+- No se puede cambiar el tema con una descarga o conversión en curso, para no perder su progreso.
+- Mensajes más claros cuando falta la carpeta de destino, cambia un sitio o no se conocen las resoluciones.
+- Los fallos de descarga y conversión quedan en el registro local.
+- El instalador incluye las licencias de las librerías de terceros y el enlace al código de FFmpeg.
 
 ## [0.7.1] - 2026-11-21
 
@@ -40,7 +57,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Añadido
 - Tema claro y tema "Sistema" (sigue el modo de Windows). Se cambia al instante desde Ajustes.
 - Actualización automática del motor yt-dlp desde GitHub, con verificación de firma SHA-256 y botón "Buscar actualizaciones".
-- Deno como motor de JavaScript para YouTube (más formatos y menos fallos).
+- Deno como motor de JavaScript (más formatos y menos fallos).
 - Atajos de teclado: Ctrl+V pega y analiza, Ctrl+1/Ctrl+2 cambian de sección, Ctrl+O agrega archivos, Ctrl+, abre Ajustes, Esc lo cierra.
 
 ### Cambiado
