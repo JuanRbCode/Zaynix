@@ -33,6 +33,7 @@ Si ves una versión falsa o dañina que usa el nombre Zaynix, avisa en los Issue
 - La app se conecta a los sitios cuyos enlaces pegas, a GitHub para actualizar su motor de descargas y al sitio de Zaynix, al abrirse y cada 6 horas, para saber si hay una versión nueva.
 - Como en cualquier conexión a internet, esos servicios reciben tu dirección IP y datos técnicos. La consulta al sitio de Zaynix no incluye tus enlaces, tu historial ni un identificador tuyo.
 - El sitio web se aloja en Railway y el instalador en GitHub. Cada uno aplica su propia política de privacidad.
+- GitHub cuenta cuántas veces se descarga cada instalador. El autor solo ve ese total por versión: no sabe quién lo descargó ni desde dónde, y el número es público.
 
 Para borrar tus datos locales, elimina la carpeta `%APPDATA%\Zaynix`.
 
