@@ -2,7 +2,7 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versiones según [SemVer](https://semver.org/lang/es/).
 
-## [0.7.2] - Sin publicar
+## [0.7.2] - 2026-11-22
 
 ### Cambiado
 - Licencia del código: de MIT a GPL versión 3 o posterior. El nombre y el logo quedan reservados (MARCA.md).
@@ -11,6 +11,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - Textos grises, verdes y rojos con mejor contraste en ambos temas.
 
 ### Corregido
+- Dos canciones con el mismo título ya no se reemplazan: la segunda se guarda con un número.
+- Si un elemento de una lista falla, se descargan los demás.
+- Cancelar funciona también durante la conversión y no deja archivos a medias.
+- No se puede cambiar el tema con una descarga o conversión en curso, para no perder su progreso.
+- Mensajes más claros cuando falta la carpeta de destino, cambia un sitio o no se conocen las resoluciones.
+- Los fallos de descarga y conversión quedan en el registro local.
 - El instalador incluye las licencias de las librerías de terceros y el enlace al código de FFmpeg.
 
 ## [0.7.1] - 2026-11-21

@@ -3,14 +3,17 @@ from __future__ import annotations
 import threading
 from pathlib import Path
 from typing import Callable
+from urllib.parse import urlparse
 
 import flet as ft
 
 from zaynix.controladores.sistema import abrir, mostrar_en_carpeta, tamano_legible, validar_enlace
+from zaynix.core import actualizador
 from zaynix.core.config import Config
 from zaynix.core.descargador import analizar, descargar, opciones_resolucion
-from zaynix.core.errores import Cancelado, traducir_error
+from zaynix.core.errores import SITIO_CAMBIO, Cancelado, traducir_error
 from zaynix.core.historial import Entrada, Historial, fecha_corta
+from zaynix.core.registro import log
 from zaynix.ui.vistas.descargar import VistaDescargar
 
 TIPO = "descarga"
@@ -27,7 +30,7 @@ class ControladorDescargar:
         self._temporizador: threading.Timer | None = None
         self._turno = 0
         self._analizado = ""
-        self._ocupado = False
+        self.ocupado = False
         self.campo_enfocado = False
 
         vista.url.on_focus = lambda e: setattr(self, "campo_enfocado", True)
@@ -73,7 +76,7 @@ class ControladorDescargar:
 
     def _analizar(self):
         link = (self.vista.url.value or "").strip()
-        if self._ocupado or link == self._analizado:
+        if self.ocupado or link == self._analizado:
             return
         self._turno += 1
         turno = self._turno
@@ -99,6 +102,8 @@ class ControladorDescargar:
         self.page.update()
 
     async def pegar(self, e=None):
+        if self.ocupado:
+            return
         texto = (await self.portapapeles.get() or "").strip()
         if not texto:
             self.vista.mostrar_aviso("El portapapeles está vacío.", "aviso")
@@ -109,6 +114,8 @@ class ControladorDescargar:
         self.page.update()
 
     def iniciar(self, e=None):
+        if self.ocupado:
+            return
         link = (self.vista.url.value or "").strip()
         error = validar_enlace(link)
         if error:
@@ -119,6 +126,8 @@ class ControladorDescargar:
             self._temporizador.cancel()
         self._turno += 1
         self.vista.limpiar_aviso()
+        self.ocupado = True
+        self._cancelar.clear()
         self.page.run_thread(self._trabajar, link)
 
     def _progreso(self, fraccion, mensaje):
@@ -128,23 +137,33 @@ class ControladorDescargar:
 
     def _trabajar(self, link: str):
         v = self.vista
-        self._ocupado = True
-        self._cancelar.clear()
         v.mostrar_analizando(False)
         v.poner_ocupado(True)
         self.actividad("Conectando")
         self.page.update()
         formato, calidad, rotulo = v.formato.valor, v.calidad_elegida(), v.texto_calidad()
+        fallidos: list[str] = []
+
+        def terminado(r):
+            peso = tamano_legible(r.archivo.stat().st_size) if r.archivo.exists() else "—"
+            self._mostrar(self.historial.agregar(TIPO, r.titulo, r.archivo,
+                                                 f"{formato.upper()} · {rotulo} · {peso}"))
+            self.page.update()
+
         try:
             resultados = descargar(link, Path(self.cfg.carpeta_descargas), formato, calidad, v.playlist.value,
-                                   self._progreso, self._cancelar.is_set, portada=self.cfg.incrustar_portada)
-            for r in resultados:
-                peso = tamano_legible(r.archivo.stat().st_size) if r.archivo.exists() else "—"
-                self._mostrar(self.historial.agregar(TIPO, r.titulo, r.archivo,
-                                                     f"{formato.upper()} · {rotulo} · {peso}"))
+                                   self._progreso, self._cancelar.is_set, portada=self.cfg.incrustar_portada,
+                                   al_terminar=terminado, al_fallar=fallidos.append)
+            for f in fallidos:
+                log.warning("Elemento de la lista no descargado: %s", f)
             n = len(resultados)
-            v.mostrar_aviso(f"Listo: {n} archivo{'s' if n != 1 else ''} guardado{'s' if n != 1 else ''} "
-                            f"en {self.cfg.carpeta_descargas}", "exito")
+            listo = (f"Listo: {n} archivo{'s' if n != 1 else ''} guardado{'s' if n != 1 else ''} "
+                     f"en {self.cfg.carpeta_descargas}")
+            if fallidos:
+                v.mostrar_aviso(f"{listo}. {len(fallidos)} no se pudo descargar." if len(fallidos) == 1 else
+                                f"{listo}. {len(fallidos)} no se pudieron descargar.", "aviso")
+            else:
+                v.mostrar_aviso(listo, "exito")
             v.url.value = ""
             v.ocultar_info()
             self._analizado = ""
@@ -153,9 +172,14 @@ class ControladorDescargar:
         except Cancelado:
             v.mostrar_aviso("Descarga cancelada.", "aviso")
         except Exception as ex:
-            v.mostrar_error(traducir_error(ex))
+            mensaje = traducir_error(ex)
+            log.warning("Falló la descarga desde %s (%s): %s", urlparse(link).netloc, formato, ex)
+            v.mostrar_error(mensaje)
+            if mensaje == SITIO_CAMBIO:
+                threading.Thread(target=actualizador.actualizar_motor_en_segundo_plano, args=(True,),
+                                 daemon=True).start()
         finally:
-            self._ocupado = False
+            self.ocupado = False
             v.poner_ocupado(False)
             self.actividad(None)
             self.page.update()

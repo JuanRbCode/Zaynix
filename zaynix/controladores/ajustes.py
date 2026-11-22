@@ -20,11 +20,12 @@ INTERVALO_REVISION = 6 * 60 * 60
 class ControladorAjustes:
     def __init__(self, page: ft.Page, vista: VistaAjustes, cfg: Config, selector: ft.FilePicker,
                  descargar: VistaDescargar, al_cambiar_conversion: Callable[[], None],
-                 al_cambiar_tema: Callable[[str], None], al_nueva_version: Callable[[dict], None]):
+                 al_cambiar_tema: Callable[[], None], hay_tarea: Callable[[], bool], al_nueva_version: Callable[[dict], None]):
         self.page, self.vista, self.cfg, self.selector = page, vista, cfg, selector
         self.v_descargar = descargar
         self.al_cambiar_conversion = al_cambiar_conversion
         self.al_cambiar_tema = al_cambiar_tema
+        self.hay_tarea = hay_tarea
         self.al_nueva_version = al_nueva_version
         self._avisada: str | None = None
         self._bloqueo = threading.Lock()
@@ -59,9 +60,13 @@ class ControladorAjustes:
     def _elegir_tema(self, clave: str):
         if clave == self.cfg.tema:
             return
+        if self.hay_tarea():
+            self.vista.mostrar_aviso_tema("Espera a que termine la descarga o la conversión para cambiar el tema.")
+            self.page.update()
+            return
         self.cfg.tema = clave
         self.cfg.guardar()
-        self.al_cambiar_tema(clave)
+        self.al_cambiar_tema()
 
     activo: "ControladorAjustes | None" = None
     _vigilando = False

@@ -51,6 +51,7 @@ class VistaAjustes:
     def __init__(self, cfg: Config, version: str):
         self.temas = {k: _tarjeta_tema(n, m, k == cfg.tema, d) for k, n, m, d in TEMAS}
         self.tarjetas_tema = ft.Row(list(self.temas.values()), spacing=8)
+        self.aviso_tema = c.AvisoEnLinea()
 
         self.texto_version = c.texto(f"Zaynix {version}", tema.T_PEQUENO, peso=ft.FontWeight.W_500)
         self.estado_version = c.texto("", tema.T_MINI, P.texto_tenue, cortar=False)
@@ -86,6 +87,7 @@ class VistaAjustes:
             c.seccion_ajustes("Apariencia", [
                 c.texto("Tema", tema.T_PEQUENO, peso=ft.FontWeight.W_500),
                 self.tarjetas_tema,
+                self.aviso_tema.control,
             ]),
             c.seccion_ajustes("Descargas", [
                 _bloque_carpeta("Carpeta de descargas", "Dónde se guarda lo que descargas de enlaces",
@@ -124,6 +126,9 @@ class VistaAjustes:
             c.texto(f"Zaynix v{version}", tema.T_MINI, P.texto_suave, ft.FontWeight.W_500),
             c.texto("Software libre · GPLv3 · Sin garantía", tema.T_MINI, P.texto_tenue),
         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+
+    def mostrar_aviso_tema(self, mensaje: str) -> None:
+        self.aviso_tema.mostrar(mensaje, "aviso")
 
     def mostrar_carpeta_descargas(self, ruta: str) -> None:
         self.texto_descargas.value = ruta

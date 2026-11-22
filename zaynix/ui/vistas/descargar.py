@@ -109,8 +109,12 @@ class VistaDescargar:
             opciones = {"max": "Máxima"}
             opciones.update({str(r): f"{r}p" if r < 2160 else "4K" for r in self.alturas})
             self.calidad.cambiar_opciones(opciones, "max")
-            self.nota_calidad.value = ("Resoluciones disponibles para este video." if self.alturas else
-                                       "Pega un enlace para ver las resoluciones disponibles.")
+            if self.alturas:
+                self.nota_calidad.value = "Resoluciones disponibles para este video."
+            elif self.previa.visible:
+                self.nota_calidad.value = "Este enlace no informa sus resoluciones. Se usará la mejor disponible."
+            else:
+                self.nota_calidad.value = "Pega un enlace para ver las resoluciones disponibles."
         elif formato in SIN_PERDIDA:
             self.rotulo_calidad.value = "Calidad"
             self.calidad.control.visible = False

@@ -110,9 +110,9 @@ def instalar(version: str, al_progreso: Callable[[float | None], None] | None = 
     _guardar_estado(version=version)
 
 
-def actualizar_motor_en_segundo_plano() -> None:
+def actualizar_motor_en_segundo_plano(forzar: bool = False) -> None:
     from zaynix.core.registro import log
-    if not toca_revisar():
+    if not forzar and not toca_revisar():
         return
     try:
         nueva = hay_actualizacion()

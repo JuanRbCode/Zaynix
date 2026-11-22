@@ -5,18 +5,27 @@ class Cancelado(Exception):
     pass
 
 
+class ErrorClaro(Exception):
+    pass
+
+
 _SIN_RED = ("getaddrinfo", "failed to resolve", "name or service not known", "network is unreachable",
             "no address associated", "timed out", "connection reset", "connection aborted",
             "unable to connect", "winerror 10060", "winerror 11001", "winerror 10051", "temporary failure")
 
 
+SITIO_CAMBIO = "El sitio cambió y la descarga falló. Cierra Zaynix, ábrela en unos minutos e inténtalo de nuevo."
+
+
 def traducir_error(ex: BaseException) -> str:
+    if isinstance(ex, ErrorClaro):
+        return str(ex)
     m = str(ex)
     b = m.lower()
     if any(k in b for k in _SIN_RED):
         return "Sin conexión a internet. Revisa tu red e inténtalo de nuevo."
     if any(k in b for k in ("unable to extract", "nsig", "signature", "player response", "requested format is not")):
-        return "El sitio cambió su funcionamiento. Actualiza el motor de descargas en Ajustes e inténtalo de nuevo."
+        return SITIO_CAMBIO
     if "unsupported url" in b:
         return "Este enlace no es compatible con Zaynix."
     if any(k in b for k in ("private video", "video unavailable", "not available", "has been removed")):
