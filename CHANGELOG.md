@@ -2,6 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versiones según [SemVer](https://semver.org/lang/es/).
 
+## [0.7.1] - 2026-11-21
+
+### Añadido
+- Instalador para Windows (`ZaynixSetup-x.y.z.exe`) con Inno Setup: instalación por usuario sin permisos de administrador, acceso directo opcional y desinstalador.
+- Script `tools/publicar.ps1`: pruebas, compilación, instalador y hash SHA-256 en un solo paso.
+
+### Corregido
+- ffmpeg y Deno se usan directamente desde los paquetes incluidos, para que la app funcione instalada en carpetas sin permiso de escritura.
+
 ## [0.7.0] - 2026-11-21
 
 ### Añadido

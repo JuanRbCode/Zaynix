@@ -1,4 +1,4 @@
-import re
+﻿import re
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw
@@ -46,6 +46,7 @@ def main():
     img.paste((255, 255, 255, 255), mask=mascara)
 
     img.resize((256, 256), Image.LANCZOS).save(ASSETS / "icono.png")
+    img.save(ASSETS / "icon.png")
     img.save(ASSETS / "icono.ico", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
     print("OK:", ASSETS / "icono.ico")
 

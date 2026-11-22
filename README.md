@@ -74,11 +74,20 @@ tools/               Scripts auxiliares (generar_icono.py)
 
 Los ajustes y el historial se guardan en `%APPDATA%\Zaynix\`.
 
-## Compilar un ejecutable
+## Publicar una versión
 
-```powershell
-.venv\Scripts\flet build windows
-```
+Requisitos: Visual Studio Build Tools con C++ e [Inno Setup 6](https://jrsoftware.org/isinfo.php). Flutter se descarga solo la primera vez.
+
+1. Sube `VERSION` en `zaynix/core/config.py` y `version` en `pyproject.toml`, y anota los cambios en `CHANGELOG.md`.
+2. Ejecuta:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File tools\publicar.ps1
+   ```
+
+   Corre las pruebas, compila con `flet build windows`, crea `dist\ZaynixSetup-x.y.z.exe` con Inno Setup y calcula su SHA-256.
+3. Fusiona `develop` en `main`, crea la etiqueta `vX.Y.Z` y publica un Release en GitHub con el instalador y su `.sha256`.
+4. Actualiza `public/version.json` en Zaynix-Website: las apps instaladas mostrarán el aviso de nueva versión.
 
 ## Uso responsable
 

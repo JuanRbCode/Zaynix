@@ -1,0 +1,26 @@
+[project]
+name = "zaynix"
+version = "0.7.1"
+description = "Descarga audio y video desde enlaces y convierte entre formatos."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "JuanRbCode" }]
+dependencies = [
+    "flet==1.1.2",
+    "yt-dlp[default]",
+    "deno",
+    "imageio-ffmpeg",
+    "mutagen",
+]
+
+[tool.flet]
+org = "com.juanrbcode"
+product = "Zaynix"
+company = "JuanRbCode"
+copyright = "Copyright (c) 2026 JuanRbCode"
+
+[tool.flet.app]
+path = "."
+module = "main"
+exclude = ["tests", "tools", ".vscode", ".pytest_cache", "build", "dist", "Zaynix.bat", "pytest.ini"]
