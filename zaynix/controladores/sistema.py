@@ -28,7 +28,7 @@ def validar_enlace(texto: str) -> str | None:
         return "Pega un enlace para continuar."
     p = urlparse(texto)
     if p.scheme not in ("http", "https") or "." not in p.netloc:
-        return "Ese enlace no es válido. Debe empezar con https:// (ej.: https://youtu.be/…)."
+        return "Ese enlace no es válido. Debe empezar con https://"
     return None
 
 

@@ -18,7 +18,7 @@ def traducir_error(ex: BaseException) -> str:
     if any(k in b for k in ("unable to extract", "nsig", "signature", "player response", "requested format is not")):
         return "El sitio cambió su funcionamiento. Actualiza el motor de descargas en Ajustes e inténtalo de nuevo."
     if "unsupported url" in b:
-        return "Este enlace no es compatible. Prueba con YouTube, SoundCloud u otro sitio de audio o video."
+        return "Este enlace no es compatible con Zaynix."
     if any(k in b for k in ("private video", "video unavailable", "not available", "has been removed")):
         return "El contenido no está disponible o es privado."
     if "sign in to confirm" in b:

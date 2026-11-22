@@ -1,6 +1,6 @@
 # Zaynix
 
-Aplicación de escritorio para Windows que descarga audio desde enlaces (YouTube, SoundCloud y cientos de sitios más) y lo guarda como MP3, y que convierte archivos de audio entre formatos.
+Aplicación de escritorio para Windows que descarga audio desde enlaces de plataformas compatibles y lo guarda como MP3, y que convierte archivos de audio entre formatos.
 
 Gratuita, sin fines de lucro y de código abierto. Descarga oficial: https://zaynix-website.up.railway.app
 

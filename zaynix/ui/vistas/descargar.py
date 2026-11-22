@@ -31,7 +31,7 @@ def _texto_duracion(segundos: int | None) -> str:
 class VistaDescargar:
     def __init__(self, formato: str, calidad_mp3: str, carpeta: str):
         self.calidad_mp3 = calidad_mp3
-        self.url = c.campo("https://www.youtube.com/watch?v=…", ft.Icons.LINK_ROUNDED)
+        self.url = c.campo("Pega aquí el enlace", ft.Icons.LINK_ROUNDED)
         self.boton_pegar = c.boton_secundario("Pegar", ft.Icons.CONTENT_PASTE_ROUNDED)
         self.aviso = c.AvisoEnLinea()
 
@@ -69,7 +69,7 @@ class VistaDescargar:
         self.mostrar_destino(carpeta)
 
         self.raiz = ft.Column(spacing=tema.ESPACIO + 4, controls=[
-            c.encabezado("Descargar", "Pega un enlace de YouTube, SoundCloud u otro sitio compatible "
+            c.encabezado("Descargar", "Pega un enlace de una plataforma compatible "
                                       "y guárdalo como audio o video."),
             c.tarjeta(ft.Column(spacing=14, controls=[
                 ft.Column([

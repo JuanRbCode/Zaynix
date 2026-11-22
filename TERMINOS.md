@@ -1,54 +1,49 @@
 # Términos de uso
 
-Última actualización: 21 de noviembre de 2026
+Actualizado el 22 de noviembre de 2026
 
-## 1. Qué es Zaynix
+## Sobre Zaynix
 
-Zaynix es una aplicación gratuita, sin anuncios y sin fines de lucro, que se ejecuta en tu computadora. Es software libre bajo la [GPL versión 3 o posterior](LICENSE). Estos términos no limitan los derechos que esa licencia te da sobre el código.
+Zaynix es una app gratuita para Windows que hago sin fines de lucro. El código se publica con la [GPL, versión 3 o posterior](LICENSE). Si algo de aquí choca con los derechos que te da esa licencia sobre el código, vale la licencia.
 
-Zaynix no está afiliada a YouTube, Google, SoundCloud, TikTok ni a ningún otro sitio, ni cuenta con su respaldo.
+No tengo relación con las plataformas ni los sitios desde los que puedas descargar. Sus nombres y marcas son de sus dueños.
 
-## 2. Uso responsable
+## Qué puedes descargar
 
-Zaynix está pensada para contenido que te pertenece, de dominio público, con una licencia que lo permita o para el que tengas autorización. Tú decides qué descargas, y te corresponde respetar los derechos de autor, las leyes de tu país y los términos de cada sitio.
+Cosas tuyas, de dominio público, con una licencia que lo permita o para las que tengas permiso. Antes de descargar algo, revisa las leyes de tu país y las reglas del sitio. Esa decisión es tuya y respondes por ella.
 
-El proyecto no aloja ni distribuye el contenido que descargas.
+Zaynix no guarda ni reparte lo que descargas.
 
-## 3. Zaynix es gratis
+## La versión oficial y las demás
 
-La versión oficial no se cobra. La GPL permite que otras personas distribuyan sus propias versiones, incluso cobrando, si entregan el código fuente. No pueden usar el nombre "Zaynix" ni el logo ZX como marca de su producto: lee las [reglas del nombre y el logo](MARCA.md).
+La oficial se descarga solo en https://zaynix-website.up.railway.app o en https://github.com/JuanRbCode/Zaynix/releases. Junto a cada instalador está su SHA-256 para que compruebes que es el original.
 
-## 4. Versiones oficiales y modificadas
+Como el código es libre, otra persona puede sacar su propia versión, con otro nombre y otro logo. Yo no reviso ni controlo esas versiones. Hasta donde la ley lo permita, no respondo por lo que hagan: virus, fallos, archivos perdidos, cobros o cualquier otro daño. Los reclamos van para quien las publicó.
 
-Las únicas descargas oficiales son las de https://zaynix-website.up.railway.app y https://github.com/JuanRbCode/Zaynix/releases. Cada instalador oficial se publica con su SHA-256, para que puedas comprobar que no fue alterado.
+La versión oficial no se cobra. Si alguien te la vendió, no fui yo. Sobre el nombre y el logo, lee [MARCA.md](MARCA.md).
 
-Cualquier persona puede publicar su propia versión. El autor de Zaynix no revisa, respalda ni controla esas versiones y, en la medida que permita la ley, no responde por ellas: ni por virus, fallos, pérdida de datos o cobros. Si algo que no descargaste de los sitios oficiales te causa un problema, reclama a quien lo publicó.
+## Privacidad
 
-Si ves una versión falsa o dañina que usa el nombre Zaynix, avisa en los Issues del proyecto.
+Zaynix no pide cuenta, no lleva anuncios y no mide lo que haces con ella. Los ajustes, el historial y el registro de errores se guardan en tu PC, en `%APPDATA%\Zaynix`, y no se mandan a ningún lado.
 
-## 5. Privacidad
+La app se conecta a internet para abrir los enlaces que pegas, para actualizar desde GitHub el programa que hace las descargas y para preguntar a la página de Zaynix, al abrirse y cada 6 horas, si hay una versión nueva. Esa pregunta no lleva tus enlaces, tu historial ni nada que te identifique. En cada conexión, el otro sitio ve tu IP.
 
-- No hay cuentas, anuncios ni estadísticas de uso.
-- Los ajustes, el historial y el registro de errores se guardan solo en tu equipo, en `%APPDATA%\Zaynix\`. El registro no se envía a nadie.
-- La app se conecta a los sitios cuyos enlaces pegas, a GitHub para actualizar su motor de descargas y al sitio de Zaynix, al abrirse y cada 6 horas, para saber si hay una versión nueva.
-- Como en cualquier conexión a internet, esos servicios reciben tu dirección IP y datos técnicos. La consulta al sitio de Zaynix no incluye tus enlaces, tu historial ni un identificador tuyo.
-- El sitio web se aloja en Railway y el instalador en GitHub. Cada uno aplica su propia política de privacidad.
-- GitHub cuenta cuántas veces se descarga cada instalador. El autor solo ve ese total por versión: no sabe quién lo descargó ni desde dónde, y el número es público.
+La página está alojada en Railway y el instalador en GitHub, cada uno con su política de privacidad. GitHub cuenta cuántas veces se bajó cada versión. Yo veo ese total, que es público, pero no quién la descargó ni desde dónde.
 
-Para borrar tus datos locales, elimina la carpeta `%APPDATA%\Zaynix`.
+Para borrar tus datos, elimina la carpeta `%APPDATA%\Zaynix`.
 
-## 6. Sin garantía
+## Sin garantía
 
-Zaynix se ofrece "tal cual", sin garantías, en la medida que permita la ley. Los sitios cambian con frecuencia y algunas descargas pueden dejar de funcionar.
+La app se entrega como está. Los sitios cambian seguido y puede que una descarga que hoy funciona mañana no. Hasta donde la ley lo permita, no doy garantías sobre su funcionamiento.
 
-## 7. Software de terceros
+## Programas de terceros
 
-La lista completa está en [LICENCIAS.md](LICENCIAS.md).
+Están en [LICENCIAS.md](LICENCIAS.md).
 
-## 8. Contacto y reclamos
+## Reclamos
 
-Escribe en https://github.com/JuanRbCode/Zaynix/issues. Es un espacio público: no incluyas datos personales.
+Escríbeme en https://github.com/JuanRbCode/Zaynix/issues. Es público, así que no pongas datos personales.
 
-## 9. Cambios
+## Si esto cambia
 
-Estos términos pueden actualizarse. Los cambios quedan registrados en el historial del repositorio.
+Actualizaré este archivo y la fecha de arriba.

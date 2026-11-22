@@ -7,6 +7,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Cambiado
 - Licencia del código: de MIT a GPL versión 3 o posterior. El nombre y el logo quedan reservados (MARCA.md).
 - Términos de uso más claros sobre privacidad, conexiones de la app y uso responsable.
+- Los textos ya no nombran plataformas concretas.
 - Textos grises, verdes y rojos con mejor contraste en ambos temas.
 
 ### Corregido
@@ -50,7 +51,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Añadido
 - Tema claro y tema "Sistema" (sigue el modo de Windows). Se cambia al instante desde Ajustes.
 - Actualización automática del motor yt-dlp desde GitHub, con verificación de firma SHA-256 y botón "Buscar actualizaciones".
-- Deno como motor de JavaScript para YouTube (más formatos y menos fallos).
+- Deno como motor de JavaScript (más formatos y menos fallos).
 - Atajos de teclado: Ctrl+V pega y analiza, Ctrl+1/Ctrl+2 cambian de sección, Ctrl+O agrega archivos, Ctrl+, abre Ajustes, Esc lo cierra.
 
 ### Cambiado
