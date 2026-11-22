@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versiones según [SemVer](https://semver.org/lang/es/).
 
+## [0.7.0] - 2026-11-21
+
+### Añadido
+- Aviso de nueva versión dentro de la app (notificación flotante y punto en Ajustes), consultando `version.json` del sitio web cada 6 horas.
+- Enlaces a sitio web, novedades, licencias y reporte de problemas en "Acerca de".
+- Registro de errores en `%APPDATA%\Zaynix\zaynix.log`.
+
+### Corregido
+- La app se bloqueaba al pulsar "Reportar un problema".
+- Distribución de los botones de "Acerca de".
+
 ## [0.6.0] - 2026-11-21
 
 ### Añadido

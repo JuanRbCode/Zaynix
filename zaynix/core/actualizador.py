@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import hashlib
 import importlib.metadata
@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Callable
 
-from zaynix.core.config import CARPETA_DATOS, REPOSITORIO, VERSION
+from zaynix.core.config import CARPETA_DATOS, REPOSITORIO, SITIO_WEB, VERSION
 
 REPO = "https://github.com/yt-dlp/yt-dlp/releases"
 CARPETA_MOTOR = CARPETA_DATOS / "motor"
@@ -111,34 +111,42 @@ def instalar(version: str, al_progreso: Callable[[float | None], None] | None = 
 
 
 def actualizar_motor_en_segundo_plano() -> None:
+    from zaynix.core.registro import log
     if not toca_revisar():
         return
     try:
         nueva = hay_actualizacion()
         if nueva:
             instalar(nueva)
-    except Exception:
-        pass
+            log.info("Motor actualizado a %s", nueva)
+    except Exception as ex:
+        log.warning("No se pudo actualizar el motor: %s", ex)
 
 
-def ultima_version_app() -> str | None:
-    pedido = urllib.request.Request(f"https://github.com/{REPOSITORIO}/releases/latest",
-                                    headers=AGENTE, method="HEAD")
+def consultar_version_app() -> dict:
+    pedido = urllib.request.Request(f"{SITIO_WEB}/version.json", headers=AGENTE)
     with urllib.request.urlopen(pedido, timeout=15) as r:
-        final = r.geturl().rstrip("/")
-    if "/releases/tag/" not in final:
-        return None
-    return final.rsplit("/", 1)[-1].lstrip("v")
+        datos = json.loads(r.read().decode("utf-8-sig"))
+    if not isinstance(datos, dict) or "version" not in datos:
+        raise ValueError("Respuesta de versión inválida")
+    return datos
 
 
-def hay_version_app() -> str | None:
-    ultima = ultima_version_app()
-    return ultima if ultima and _tupla(ultima) > _tupla(VERSION) else None
+def hay_version_app() -> dict | None:
+    datos = consultar_version_app()
+    return datos if _tupla(str(datos["version"])) > _tupla(VERSION) else None
 
 
-def pagina_version(version: str | None = None) -> str:
-    base = f"https://github.com/{REPOSITORIO}/releases"
-    return f"{base}/tag/v{version}" if version else f"{base}/latest"
+def enlace_descarga(datos: dict | None) -> str:
+    return (datos or {}).get("descarga") or SITIO_WEB
+
+
+ENLACES = {
+    "novedades": f"https://github.com/{REPOSITORIO}/blob/main/CHANGELOG.md",
+    "licencias": f"https://github.com/{REPOSITORIO}/blob/main/LICENSE",
+    "problema": f"https://github.com/{REPOSITORIO}/issues/new",
+    "sitio": SITIO_WEB,
+}
 
 
 def toca_revisar() -> bool:

@@ -100,3 +100,15 @@ def test_motor_local_no_se_activa_si_es_viejo(monkeypatch, tmp_path):
     antes = list(__import__("sys").path)
     actualizador.activar_motor_local()
     assert __import__("sys").path == antes
+
+
+def test_detecta_version_nueva_de_la_app(monkeypatch):
+    monkeypatch.setattr(actualizador, "consultar_version_app", lambda: {"version": "99.0.0", "descarga": "x"})
+    assert actualizador.hay_version_app()["version"] == "99.0.0"
+    monkeypatch.setattr(actualizador, "consultar_version_app", lambda: {"version": "0.0.1"})
+    assert actualizador.hay_version_app() is None
+
+
+def test_enlace_descarga_por_defecto():
+    assert actualizador.enlace_descarga(None) == actualizador.SITIO_WEB
+    assert actualizador.enlace_descarga({"descarga": "https://a/b.exe"}) == "https://a/b.exe"
